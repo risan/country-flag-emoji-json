@@ -78,6 +78,10 @@ $ npm run build
 $ yarn build
 ```
 
+## Related
+
+* [country-flag-emoji](https://github.com/risan/country-flag-emoji): List of country codes and its flag emojis.
+
 ## License
 
 MIT © [Risan Bagja Pradana](https://bagja.net)
