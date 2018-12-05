@@ -17,20 +17,14 @@ Check the [json directory](https://github.com/risan/country-flag-emoji-json/tree
 
 ```json
 [
-  //...
+  ...
   {
     "code": "ID",
     "unicode": "U+1F1EE U+1F1E9",
     "name": "Indonesia",
     "emoji": "🇮🇩"
   },
-  {
-    "code": "IE",
-    "unicode": "U+1F1EE U+1F1EA",
-    "name": "Ireland",
-    "emoji": "🇮🇪"
-  },
-  //...
+  ...
 ]
 ```
 
@@ -39,20 +33,14 @@ Check the [json directory](https://github.com/risan/country-flag-emoji-json/tree
 
 ```json
 {
-  //...
+  ...
   "ID": {
     "code": "ID",
     "unicode": "U+1F1EE U+1F1E9",
     "name": "Indonesia",
     "emoji": "🇮🇩"
   },
-  "IE": {
-    "code": "IE",
-    "unicode": "U+1F1EE U+1F1EA",
-    "name": "Ireland",
-    "emoji": "🇮🇪"
-  },
-  //...
+  ...
 }
 ```
 
