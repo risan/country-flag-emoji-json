@@ -1,0 +1,8 @@
+__tests__
+data
+scripts
+.codeclimate.yml
+.eslintrc.js
+.travis.yml
+jest.config.js
+yarn.lock
