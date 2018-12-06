@@ -1,7 +1,7 @@
 __tests__
 data
 scripts
-.codeclimate.yml
+.eslintignore
 .eslintrc.js
 .travis.yml
 jest.config.js

@@ -1,12 +1,8 @@
+dist: xenial
 language: node_js
-matrix:
-  fast_finish: true
-  include:
-    - node_js: 11
-cache:
-  yarn: true
-  directories:
-    - node_modules
+node_js:
+  - 11
+cache: npm
 notifications:
   email:
     on_success: never

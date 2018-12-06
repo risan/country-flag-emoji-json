@@ -1,16 +1,14 @@
 # Country Flag Emoji JSON
 
-[![Build Status](https://flat.badgen.net/travis/risan/country-flag-emoji-json)](https://travis-ci.org/risan/country-flag-emoji-json)
-[![Maintainability](https://flat.badgen.net/codeclimate/maintainability/risan/country-flag-emoji-json)](https://codeclimate.com/github/risan/country-flag-emoji-json)
-[![Latest Stable Version](https://flat.badgen.net/npm/v/country-flag-emoji-json)](https://www.npmjs.com/package/country-flag-emoji-json)
-[![Code Style: Prettier](https://flat.badgen.net/badge/code%20style/prettier/ff69b4)](https://github.com/prettier/prettier)
-[![License](https://flat.badgen.net/npm/license/country-flag-emoji-json)](https://github.com/risan/country-flag-emoji-json/blob/master/LICENSE)
+[![Build Status](https://badgen.net/travis/risan/npm-boilerplate-node-browser)](https://travis-ci.org/risan/npm-boilerplate-node-browser)
+[![Greenkeeper](https://badges.greenkeeper.io/risan/npm-boilerplate-node-browser.svg)](https://greenkeeper.io)
+[![Latest Version](https://badgen.net/npm/v/npm-boilerplate-node-browser)](https://www.npmjs.com/package/npm-boilerplate-node-browser)
 
 Country flag emojis in JSON format.
 
-## Country Flag Emoji JSON CDN
+## CDN
 
-Check the [json directory](https://github.com/risan/country-flag-emoji-json/tree/master/json) to see all available JSON files. The JSON files are also available through [UNPKG](https://unpkg.com/) CDN.
+The JSON files are available over a CDN:
 
 * Flag emojis: [unpkg.com/country-flag-emoji-json@latest/json/flag-emojis.pretty.json](https://unpkg.com/country-flag-emoji-json@latest/json/flag-emojis.pretty.json)
 * Flag emojis (minified): [unpkg.com/country-flag-emoji-json@latest/json/flag-emojis.json](https://unpkg.com/country-flag-emoji-json@latest/json/flag-emojis.json)
@@ -62,9 +60,6 @@ $ cd country-flag-emoji-json
 
 # Install the dependencies
 $ npm install
-
-# Or if you use Yarn
-$ yarn
 ```
 
 ### 3. Generate the JSON Files
@@ -73,9 +68,6 @@ Run the following command to generate the JSON files:
 
 ```bash
 $ npm run build
-
-# Or if you use Yarn
-$ yarn build
 ```
 
 ## Related
@@ -84,7 +76,7 @@ $ yarn build
 
 ## License
 
-MIT © [Risan Bagja Pradana](https://bagja.net)
+[MIT](https://github.com/risan/country-flag-emoji-json/blob/master/LICENSE) © [Risan Bagja Pradana](https://bagja.net)
 
 > Emojis data used to generate the JSON files are provided by the [Unicode Consortium](https://www.unicode.org/).
 >
