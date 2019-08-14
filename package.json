@@ -40,7 +40,7 @@
     "jest": "^23.6.0",
     "lodash.keyby": "^4.6.0",
     "prettier": "^1.15.2",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "write-to-file": "^1.0.1"
   },
   "engines": {
