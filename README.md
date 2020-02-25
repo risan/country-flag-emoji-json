@@ -1,7 +1,6 @@
 # Country Flag Emoji JSON
 
 [![Build Status](https://badgen.net/travis/risan/npm-boilerplate-node-browser)](https://travis-ci.org/risan/npm-boilerplate-node-browser)
-[![Greenkeeper](https://badges.greenkeeper.io/risan/npm-boilerplate-node-browser.svg)](https://greenkeeper.io)
 [![Latest Version](https://badgen.net/npm/v/npm-boilerplate-node-browser)](https://www.npmjs.com/package/npm-boilerplate-node-browser)
 
 Country flag emojis in JSON format.
