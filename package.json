@@ -25,8 +25,7 @@
     "url": "https://github.com/risan/country-flag-emoji-json.git"
   },
   "scripts": {
-    "build": "scripts/build.js",
-    "prepublishOnly": "npm run build"
+    "build": "scripts/build.js"
   },
   "devDependencies": {
     "axios": "^0.21.4",
