@@ -1,7 +1,7 @@
 {
   "name": "country-flag-emoji-json",
-  "version": "1.0.2",
-  "description": "Country flag emojis in JSON format",
+  "version": "2.0.0",
+  "description": "Country flag emojis in JSON format and SVG image.",
   "keywords": [
     "country",
     "country-code",
@@ -13,37 +13,27 @@
   "bugs": {
     "url": "https://github.com/risan/country-flag-emoji-json/issues"
   },
-  "license": "MIT",
+  "license": "CC-BY-4.0",
   "author": {
     "name": "Risan Bagja Pradana",
     "email": "risanbagja@gmail.com",
-    "url": "https://bagja.net"
+    "url": "https://risanb.com"
   },
-  "main": "json/flag-emojis.pretty.json",
+  "main": "dist/index.json",
   "repository": {
     "type": "git",
     "url": "https://github.com/risan/country-flag-emoji-json.git"
   },
   "scripts": {
     "build": "scripts/build.js",
-    "lint": "eslint ./",
-    "lint-fix": "eslint ./ --fix",
-    "prepublishOnly": "npm run lint && npm run test",
-    "test": "npm run build && jest"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^4.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-prettier": "^3.0.0",
-    "jest": "^23.6.0",
-    "lodash.keyby": "^4.6.0",
-    "prettier": "^1.15.2",
-    "rimraf": "^2.6.2",
-    "write-to-file": "^1.0.1"
+    "axios": "^0.21.4",
+    "fs-extra": "^10.0.0",
+    "lodash": "^4.17.21"
   },
   "engines": {
-    "node": ">=11.0.0"
+    "node": ">=14.0.0"
   }
 }

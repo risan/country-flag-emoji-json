@@ -1,8 +1,4 @@
-__tests__
+.idea
 data
 scripts
-.eslintignore
-.eslintrc.js
-.travis.yml
-jest.config.js
 yarn.lock
