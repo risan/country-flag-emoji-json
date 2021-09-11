@@ -47,7 +47,7 @@ If you prefer the list to be keyed by the country code, use the following URL:
 
 - [`cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/by-code.json`](https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/by-code.json)
 
-```json
+```js
 {
   "AC": {
     "name": "Ascension Island", 
