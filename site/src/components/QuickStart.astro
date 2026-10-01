@@ -13,11 +13,13 @@ const tabs = [
     title: 'npm',
     code: `npm install country-flag-emoji-json
 
-import flags from 'country-flag-emoji-json';
-import byCode from 'country-flag-emoji-json/dist/by-code.json';
+// CommonJS
+const flags = require('country-flag-emoji-json');
 
-console.log(flags[0]);
-console.log(byCode.ID.emoji); // 🇮🇩`,
+// ES modules (Node.js 18.20+ or a bundler)
+import flags from 'country-flag-emoji-json' with { type: 'json' };
+
+console.log(flags[0]);`,
   },
   {
     id: 'fetch',

@@ -1,5 +1,6 @@
 ---
 import CodeBlock from './CodeBlock.astro';
+import CopyButton from './CopyButton.astro';
 import { authorUrl, cdn, repoUrl } from '../data';
 
 const files = [
@@ -44,14 +45,14 @@ const files = [
 
 const fields = [
   ['name', 'Unicode CLDR short name.', 'Indonesia'],
-  ['code', 'ISO 3166-1 alpha-2 code. See special codes below.', 'ID'],
+  ['code', 'ISO 3166-1 alpha-2 code, or an ISO 3166-2 code for England, Scotland and Wales. See special codes below.', 'ID'],
   ['emoji', 'The flag emoji character.', '🇮🇩'],
   ['unicode', 'Code points of the emoji, space separated.', 'U+1F1EE U+1F1E9'],
   ['image', 'jsDelivr URL of the SVG image.', `${cdn}/images/ID.svg`],
 ];
 
 const specialCodes = [
-  ['AC, CP, DG, EA, IC, TA', 'Exceptionally reserved ISO 3166-1 codes.'],
+  ['AC, CP, CQ, DG, EA, IC, TA', 'Exceptionally reserved ISO 3166-1 codes.'],
   ['EU, UN', 'Reserved codes, used for the European Union and United Nations.'],
   ['XK', 'User-assigned code for Kosovo.'],
   ['GB-ENG, GB-SCT, GB-WLS', 'ISO 3166-2 codes for England, Scotland and Wales.'],
@@ -81,30 +82,22 @@ const th = 'px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider
     <p class="text-muted">
       Use jsDelivr, as below. The package is also available on <a class={linkClass} href="https://unpkg.com/country-flag-emoji-json/">unpkg</a> through npm.
     </p>
-    <div class="overflow-x-auto rounded-xl border border-line bg-surface">
-      <table class="w-full min-w-[40rem] text-sm">
-        <thead class="border-b border-line bg-code">
-          <tr>
-            <th class={th}>File</th>
-            <th class={th}>URL</th>
-            <th class={th}>Example</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-line align-top">
-          {
-            files.map((item) => (
-              <tr>
-                <td class="px-4 py-3">
-                  <code class="font-mono font-medium">{item.file}</code>
-                  <p class="mt-1 text-muted">{item.about}</p>
-                </td>
-                <td class="min-w-72 px-4 py-3"><code class="break-all font-mono text-xs">{item.url}</code></td>
-                <td class="px-4 py-3"><pre class="overflow-x-auto font-mono text-xs leading-relaxed">{item.example}</pre></td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+    <div class="space-y-4">
+      {
+        files.map((item, index) => (
+          <div class="space-y-3 rounded-xl border border-line bg-surface p-4 sm:p-5">
+            <div>
+              <code class="font-mono font-medium">{item.file}</code>
+              <p class="mt-0.5 text-sm text-muted">{item.about}</p>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg border border-line bg-code px-3 py-2">
+              <code id={`file-url-${index}`} class="min-w-0 flex-1 break-all font-mono text-xs">{item.url}</code>
+              <CopyButton source={`#file-url-${index}`} label={`${item.file} URL`} />
+            </div>
+            <CodeBlock id={`file-example-${index}`} code={item.example} label={`${item.file} example`} />
+          </div>
+        ))
+      }
     </div>
   </div>
 
@@ -141,7 +134,7 @@ const th = 'px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider
       {
         specialCodes.map(([codes, about]) => (
           <div class="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:gap-6">
-            <dt class="font-mono text-sm font-medium sm:w-56 sm:shrink-0">{codes}</dt>
+            <dt class="font-mono text-sm font-medium sm:w-64 sm:shrink-0">{codes}</dt>
             <dd class="text-sm text-muted">{about}</dd>
           </div>
         ))
