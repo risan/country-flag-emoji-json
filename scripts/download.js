@@ -1,26 +1,25 @@
-const fs = require('fs-extra');
-const axios = require('axios');
+#!/usr/bin/env node
+const fs = require('node:fs/promises');
+
+const UNICODE_VERSION = '18.0.0';
+const SEQUENCES_FILE = 'data/emoji-sequences.txt';
 
 const downloadEmojiSequences = async () => {
-  const file = 'data/emoji-sequences.txt';
-  const exists = await fs.pathExists(file);
+  console.log(`+ Downloading Unicode ${UNICODE_VERSION} emoji sequences...`);
 
-  if (exists) {
-    return;
+  const res = await fetch(`https://unicode.org/Public/${UNICODE_VERSION}/emoji/emoji-sequences.txt`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to download emoji sequences: HTTP ${res.status}`);
   }
 
-  console.log('+ Downloading emoji sequences...');
-
-  const res = await axios.get('https://unicode.org/Public/emoji/14.0/emoji-sequences.txt');
-
-  await fs.outputFile(file, res.data);
+  await fs.mkdir('data', { recursive: true });
+  await fs.writeFile(SEQUENCES_FILE, await res.text());
 };
 
 (async () => {
-  const args = process.argv.slice(2);
-
-  if (args.length > 0 && args[0] === '--clean') {
-    await fs.emptyDir('data');
+  if (process.argv.includes('--clean')) {
+    await fs.rm('data', { recursive: true, force: true });
   }
 
   await downloadEmojiSequences();

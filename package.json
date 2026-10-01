@@ -1,38 +1,40 @@
 {
   "name": "country-flag-emoji-json",
-  "version": "2.0.0",
-  "description": "Country flag emojis in JSON format and SVG image.",
+  "version": "3.0.0",
+  "description": "Country flag emojis in JSON format and SVG images.",
   "keywords": [
     "country",
     "country-code",
     "emoji",
     "flag",
-    "iso-3166"
+    "flags",
+    "iso-3166",
+    "svg",
+    "unicode"
   ],
   "homepage": "https://github.com/risan/country-flag-emoji-json#readme",
   "bugs": {
     "url": "https://github.com/risan/country-flag-emoji-json/issues"
   },
-  "license": "CC-BY-4.0",
+  "license": "CC-BY-SA-4.0",
   "author": {
     "name": "Risan Bagja Pradana",
     "email": "risanbagja@gmail.com",
     "url": "https://risanb.com"
   },
   "main": "dist/index.json",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/risan/country-flag-emoji-json.git"
   },
   "scripts": {
-    "build": "scripts/build.js"
-  },
-  "devDependencies": {
-    "axios": "^0.21.4",
-    "fs-extra": "^10.0.0",
-    "lodash": "^4.17.21"
+    "download": "node scripts/download.js",
+    "build": "node scripts/build.js"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
