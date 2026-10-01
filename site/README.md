@@ -10,7 +10,7 @@ npm run preview    # serve the build locally
 npm run deploy     # build and publish with wrangler (Cloudflare Workers static assets)
 ```
 
-Set `SITE_URL` to the public URL of the site (default in `astro.config.mjs`). It is used for the canonical link, Open Graph tags, sitemap and robots.txt. Regenerate the social image with `node scripts/make-og.mjs`.
+The public URL (`https://country-flag-emoji.risanb.com`) is set as `site` in `astro.config.mjs`. It is used for the canonical link, Open Graph tags, sitemap and robots.txt. Regenerate the social image with `node scripts/make-og.mjs`.
 
 ## Deploy with Cloudflare Workers Builds
 
@@ -23,6 +23,6 @@ Connect the GitHub repository to a Worker in the Cloudflare dashboard with these
 | Root directory | `site` |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
-| Build variable | `SITE_URL` = the site's public URL, e.g. `https://country-flag-emoji.<subdomain>.workers.dev` |
+| Custom domain | `country-flag-emoji.risanb.com` (Settings → Domains & Routes) |
 
 Node.js 24 is pinned in `.node-version`.
