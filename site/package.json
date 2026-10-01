@@ -1,0 +1,23 @@
+{
+  "name": "country-flag-emoji-json-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "copy-images": "node scripts/copy-images.mjs",
+    "dev": "npm run copy-images && astro dev",
+    "build": "npm run copy-images && astro build",
+    "preview": "astro preview",
+    "deploy": "npm run copy-images && astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.5",
+    "country-flag-emoji-polyfill": "^0.1.10",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5",
+    "wrangler": "^4.145.0"
+  }
+}

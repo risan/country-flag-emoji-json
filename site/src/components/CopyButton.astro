@@ -1,0 +1,28 @@
+---
+interface Props {
+  source: string;
+  label?: string;
+  class?: string;
+}
+
+const { source, label = 'what', class: className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  data-copy-source={source}
+  aria-label={`Copy ${label}`}
+  class:list={[
+    'inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-muted transition hover:border-accent hover:text-accent data-[copied]:border-accent data-[copied]:bg-accent-soft data-[copied]:text-accent',
+    className,
+  ]}
+>
+  <svg class="copy-icon size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <rect x="5.5" y="5.5" width="8" height="8" rx="1.5"></rect>
+    <path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5"></path>
+  </svg>
+  <svg class="copy-check size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="m3 8.5 3.2 3L13 4.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <span class="copy-label" aria-live="polite">Copy</span>
+</button>
