@@ -1,16 +1,23 @@
 ---
+import { Code } from 'astro:components';
 import CopyButton from './CopyButton.astro';
 
 interface Props {
   id: string;
   code: string;
-  label?: string;
+  lang: 'js' | 'json' | 'html' | 'css' | 'sh';
+  title: string;
 }
 
-const { id, code, label } = Astro.props;
+const { id, code, lang, title } = Astro.props;
 ---
 
-<div class="relative rounded-xl border border-line bg-code">
-  <CopyButton source={`#${id}`} label={label} class="absolute right-2 top-2" />
-  <pre class="whitespace-pre-wrap p-4 pr-24 font-mono text-[13px] leading-relaxed [overflow-wrap:anywhere]"><code id={id}>{code}</code></pre>
+<div class="overflow-hidden rounded-md border border-line bg-code">
+  <div class="flex h-9 items-center justify-between border-b border-line pl-3.5 pr-1">
+    <span class="font-mono text-[12px] text-subtle">{title}</span>
+    <CopyButton source={`#${id}`} label={title} />
+  </div>
+  <div id={id} data-full={code}>
+    <Code code={code} lang={lang} theme="github-light" class="px-3.5 py-3 font-mono text-[13px] leading-[1.7]" />
+  </div>
 </div>
