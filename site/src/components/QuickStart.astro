@@ -6,31 +6,34 @@ const tabs = [
   {
     id: 'cdn',
     title: 'CDN',
-    code: `${cdn}/index.json`,
+    blocks: [{ code: `${cdn}/index.json` }],
   },
   {
     id: 'npm',
     title: 'npm',
-    code: `npm install country-flag-emoji-json
-
-// CommonJS
-const flags = require('country-flag-emoji-json');
-
-// ES modules (Node.js 18.20+ or a bundler)
-import flags from 'country-flag-emoji-json' with { type: 'json' };
-
-console.log(flags[0]);`,
+    blocks: [
+      { label: 'Install', code: 'npm install country-flag-emoji-json' },
+      { label: 'CommonJS', code: "const flags = require('country-flag-emoji-json');" },
+      {
+        label: 'ES modules (Node.js 18.20+ or a bundler)',
+        code: "import flags from 'country-flag-emoji-json' with { type: 'json' };",
+      },
+    ],
   },
   {
     id: 'fetch',
     title: 'fetch',
-    code: `const response = await fetch(
+    blocks: [
+      {
+        code: `const response = await fetch(
   '${cdn}/by-code.json'
 );
 const flags = await response.json();
 
 console.log(flags.JP.name); // Japan
 console.log(flags.JP.image); // SVG URL`,
+      },
+    ],
   },
 ];
 ---
@@ -56,8 +59,13 @@ console.log(flags.JP.image); // SVG URL`,
 
   {
     tabs.map((tab, index) => (
-      <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0}>
-        <CodeBlock id={`snippet-${tab.id}`} code={tab.code} label={`${tab.title} snippet`} />
+      <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0} class="space-y-2">
+        {tab.blocks.map((block, blockIndex) => (
+          <div>
+            {block.label && <p class="mb-1 text-xs font-medium text-muted">{block.label}</p>}
+            <CodeBlock id={`snippet-${tab.id}-${blockIndex}`} code={block.code} label={block.label ?? `${tab.title} snippet`} />
+          </div>
+        ))}
       </div>
     ))
   }

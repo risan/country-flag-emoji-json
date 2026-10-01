@@ -90,17 +90,25 @@ const jsonLd = {
 
           return true;
         } catch {
+          // A modal dialog makes the rest of the page inert, so the fallback field must live inside it.
+          const host = document.querySelector('dialog[open]') ?? document.body;
+          const previousFocus = document.activeElement as HTMLElement | null;
           const field = document.createElement('textarea');
           field.value = text;
           field.style.position = 'fixed';
           field.style.opacity = '0';
-          document.body.append(field);
-          field.select();
+          host.append(field);
 
-          const copied = document.execCommand('copy');
-          field.remove();
+          try {
+            field.select();
 
-          return copied;
+            return document.execCommand('copy');
+          } catch {
+            return false;
+          } finally {
+            field.remove();
+            previousFocus?.focus();
+          }
         }
       }
 
@@ -115,7 +123,7 @@ const jsonLd = {
         const text = source?.dataset.full ?? source?.textContent ?? '';
         const label = button.querySelector('.copy-label');
 
-        if (!text || !(await copyText(text.trim()))) {
+        if (button.disabled || !text || !(await copyText(text.trim()))) {
           return;
         }
 

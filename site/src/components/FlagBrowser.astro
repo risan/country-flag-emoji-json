@@ -127,6 +127,10 @@ const rows = [
 
   const normalize = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
   const field = (id: string) => document.querySelector<HTMLElement>(`#value-${id}`)!;
+  const svgCopyButton = document.querySelector<HTMLButtonElement>('[data-copy-source="#value-svg"]')!;
+
+  let latestRequest = 0;
+  let shownCode = '';
 
   function filter() {
     const terms = normalize(search.value).split(/\s+/).filter(Boolean);
@@ -167,6 +171,10 @@ const rows = [
     setValue('url', image);
     setValue('img', `<img src="${image}" alt="Flag of ${name}" width="64" height="64">`);
     setValue('svg', 'Loading...');
+    svgCopyButton.disabled = true;
+
+    shownCode = code;
+    const request = ++latestRequest;
 
     if (!dialog.open) {
       dialog.showModal();
@@ -185,16 +193,27 @@ const rows = [
 
       const markup = await response.text();
 
-      if (field('code').dataset.full === code) {
+      if (request === latestRequest) {
         setValue('svg', markup.trim());
+        svgCopyButton.disabled = false;
       }
     } catch {
-      setValue('svg', 'Could not load the SVG.');
+      if (request === latestRequest) {
+        setValue('svg', 'Could not load the SVG.');
+      }
+    }
+  }
+
+  function codeFromHash() {
+    try {
+      return decodeURIComponent(location.hash.slice(1)).toUpperCase();
+    } catch {
+      return '';
     }
   }
 
   function openFromHash() {
-    const code = decodeURIComponent(location.hash.slice(1)).toUpperCase();
+    const code = codeFromHash();
     const button = buttons.find((candidate) => candidate.dataset.code === code);
 
     if (button) {
@@ -226,9 +245,11 @@ const rows = [
   });
 
   dialog.addEventListener('close', () => {
-    if (location.hash) {
+    if (codeFromHash() === shownCode) {
       history.replaceState(null, '', location.pathname + location.search);
     }
+
+    shownCode = '';
   });
 
   document.addEventListener('keydown', (event) => {

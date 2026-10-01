@@ -13,7 +13,7 @@ const { source, label = 'what', class: className = '' } = Astro.props;
   data-copy-source={source}
   aria-label={`Copy ${label}`}
   class:list={[
-    'inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-muted transition hover:border-accent hover:text-accent data-[copied]:border-accent data-[copied]:bg-accent-soft data-[copied]:text-accent',
+    'inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-muted transition enabled:hover:border-accent enabled:hover:text-accent disabled:cursor-not-allowed disabled:opacity-50 data-[copied]:border-accent data-[copied]:bg-accent-soft data-[copied]:text-accent',
     className,
   ]}
 >
