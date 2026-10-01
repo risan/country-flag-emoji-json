@@ -1,0 +1,155 @@
+---
+import '../styles/global.css';
+import { authorUrl, description as defaultDescription, repoUrl, version } from '../data';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'country-flag-emoji-json: country flag emojis as JSON and SVG',
+  description = defaultDescription,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'country-flag-emoji-json',
+  description,
+  url: new URL('/', Astro.site).href,
+  codeRepository: repoUrl,
+  programmingLanguage: 'JSON',
+  version,
+  license: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  image: ogImage,
+  author: { '@type': 'Person', name: 'Risan Bagja Pradana', url: authorUrl },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="color-scheme" content="light dark" />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="country-flag-emoji-json" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A grid of country flags above the package name country-flag-emoji-json" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <script is:inline>
+      (function () {
+        var theme;
+
+        try {
+          theme = localStorage.getItem('theme');
+        } catch (error) {}
+
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
+
+      polyfillCountryFlagEmojis();
+
+      async function copyText(text: string) {
+        try {
+          await navigator.clipboard.writeText(text);
+
+          return true;
+        } catch {
+          // A modal dialog makes the rest of the page inert, so the fallback field must live inside it.
+          const host = document.querySelector('dialog[open]') ?? document.body;
+          const previousFocus = document.activeElement as HTMLElement | null;
+          const field = document.createElement('textarea');
+          field.value = text;
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          host.append(field);
+
+          try {
+            field.select();
+
+            return document.execCommand('copy');
+          } catch {
+            return false;
+          } finally {
+            field.remove();
+            previousFocus?.focus();
+          }
+        }
+      }
+
+      document.addEventListener('click', async (event) => {
+        const button = (event.target as Element).closest<HTMLButtonElement>('[data-copy-source]');
+
+        if (!button) {
+          return;
+        }
+
+        const source = document.querySelector<HTMLElement>(button.dataset.copySource!);
+        const text = source?.dataset.full ?? source?.textContent ?? '';
+        const label = button.querySelector('.copy-label');
+
+        if (button.disabled || !text || !(await copyText(text.trim()))) {
+          return;
+        }
+
+        button.setAttribute('data-copied', '');
+
+        if (label) {
+          label.textContent = 'Copied';
+        }
+
+        window.setTimeout(() => {
+          button.removeAttribute('data-copied');
+
+          if (label) {
+            label.textContent = 'Copy';
+          }
+        }, 1600);
+      });
+
+      document.querySelector('#theme-toggle')?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
+  </body>
+</html>

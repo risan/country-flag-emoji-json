@@ -1,0 +1,101 @@
+---
+import CodeBlock from './CodeBlock.astro';
+import { cdn } from '../data';
+
+const tabs = [
+  {
+    id: 'cdn',
+    title: 'CDN',
+    blocks: [{ code: `${cdn}/index.json` }],
+  },
+  {
+    id: 'npm',
+    title: 'npm',
+    blocks: [
+      { label: 'Install', code: 'npm install country-flag-emoji-json' },
+      { label: 'CommonJS', code: "const flags = require('country-flag-emoji-json');" },
+      {
+        label: 'ES modules (Node.js 18.20+ or a bundler)',
+        code: "import flags from 'country-flag-emoji-json' with { type: 'json' };",
+      },
+    ],
+  },
+  {
+    id: 'fetch',
+    title: 'fetch',
+    blocks: [
+      {
+        code: `const response = await fetch(
+  '${cdn}/by-code.json'
+);
+const flags = await response.json();
+
+console.log(flags.JP.name); // Japan
+console.log(flags.JP.image); // SVG URL`,
+      },
+    ],
+  },
+];
+---
+
+<div id="quickstart" class="mt-8">
+  <div role="tablist" aria-label="Quick start" class="mb-3 inline-flex rounded-lg border border-line bg-surface p-1">
+    {
+      tabs.map((tab, index) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-controls={`panel-${tab.id}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          class="rounded-md px-3.5 py-1.5 text-sm font-medium text-muted transition hover:text-fg aria-selected:bg-accent aria-selected:text-accent-fg"
+        >
+          {tab.title}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    tabs.map((tab, index) => (
+      <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0} class="space-y-2">
+        {tab.blocks.map((block, blockIndex) => (
+          <div>
+            {block.label && <p class="mb-1 text-xs font-medium text-muted">{block.label}</p>}
+            <CodeBlock id={`snippet-${tab.id}-${blockIndex}`} code={block.code} label={block.label ?? `${tab.title} snippet`} />
+          </div>
+        ))}
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  const root = document.querySelector('#quickstart')!;
+  const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+
+  function select(tab: HTMLButtonElement) {
+    for (const other of tabs) {
+      const active = other === tab;
+      other.setAttribute('aria-selected', String(active));
+      other.tabIndex = active ? 0 : -1;
+      root.querySelector<HTMLElement>(`#${other.getAttribute('aria-controls')}`)!.hidden = !active;
+    }
+
+    tab.focus();
+  }
+
+  for (const [index, tab] of tabs.entries()) {
+    tab.addEventListener('click', () => select(tab));
+
+    tab.addEventListener('keydown', (event) => {
+      const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+
+      if (step) {
+        event.preventDefault();
+        select(tabs[(index + step + tabs.length) % tabs.length]);
+      }
+    });
+  }
+</script>

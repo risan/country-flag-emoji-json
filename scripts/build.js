@@ -1,82 +1,115 @@
-const fs = require('fs-extra');
-const axios = require('axios')
-const _ = require('lodash');
+#!/usr/bin/env node
+const fs = require('node:fs/promises');
 const meta = require('../package.json');
 
-const getFlagEmojis = async (pretty = false) => {
-  const data = await fs.readFile('data/emoji-sequences.txt', 'utf8');
+const OPENMOJI_VERSION = '17.0.0';
+const IMAGE_CACHE_DIR = `data/openmoji-${OPENMOJI_VERSION}`;
+const REGIONAL_INDICATOR_OFFSET = 0x1F1A5; // U+1F1E6 (🇦) - 0x41 ("A")
+const TAG_OFFSET = 0xE0000; // U+E0067 (TAG LATIN SMALL LETTER G) - 0x67 ("g")
 
-  const emojis = data.split('\n').map(row => {
-    const cols = row.split(';').map(col => col.trim());
-
-    if (cols.length < 3) {
-      return null;
-    }
-
-    if (!['RGI_Emoji_Flag_Sequence', 'RGI_Emoji_Tag_Sequence'].includes(cols[1])) {
-      return null;
-    }
-
-    const codePoints = cols[0].split(' ').map(hex => Number(`0x${hex}`));
-
-    const name = cols[2].split('#')[0].replace('flag:', '').trim();
-    const code = codePoints.length === 2
-      ? codePoints.map(codePoint => String.fromCodePoint(codePoint - 0x1F1A5)).join('') // Convert to ISO 3166-1 alpha-2 country code
-      : name.toUpperCase();
-
-    return {
-      name,
-      code,
-      emoji: codePoints.map(codePoint => String.fromCodePoint(codePoint)).join(''),
-      unicode: codePoints.map(codePoint => `U+${codePoint.toString(16).toUpperCase()}`).join(' '),
-      image: `https://cdn.jsdelivr.net/npm/${meta.name}@${meta.version}/dist/images/${code}.svg`,
-    };
-  }).filter(Boolean);
-
-  await fs.outputJson('dist/index.json', emojis, { spaces: pretty ? 2 : 0 });
-
-  const byCodes = _.zipObject(
-    emojis.map(emoji => emoji.code),
-    emojis.map(({ code, ...emoji }) => ({ ...emoji }))
-  );
-
-  await fs.outputJson('dist/by-code.json', byCodes, { spaces: pretty ? 2 : 0 });
-
-  return emojis;
+// v2 used the uppercased name as the code for subdivision flags. Keep those
+// image paths alive so unpinned CDN URLs do not break.
+const LEGACY_IMAGE_ALIASES = {
+  'GB-ENG': 'ENGLAND',
+  'GB-SCT': 'SCOTLAND',
+  'GB-WLS': 'WALES',
 };
 
-const downloadEmojiImages = async (emojis) => {
-  const emojisChunk = _.chunk(emojis, 10);
+const toCode = (codePoints) => {
+  if (codePoints.length === 2) {
+    return codePoints
+      .map((codePoint) => String.fromCodePoint(codePoint - REGIONAL_INDICATOR_OFFSET))
+      .join('');
+  }
 
-  for (let i = 0; i < emojisChunk.length; i++) {
-    await Promise.all(emojisChunk[i].map(async emoji => {
-      const filename = emoji.unicode.replace(/U\+/g, '').replace(/\s/g, '-') + '.svg';
-      const file = `data/images/${filename}`;
+  // Tag sequence: 🏴 + tag letters + CANCEL TAG, e.g. "gbeng" -> ISO 3166-2 "GB-ENG".
+  const tags = codePoints
+    .slice(1, -1)
+    .map((codePoint) => String.fromCodePoint(codePoint - TAG_OFFSET))
+    .join('')
+    .toUpperCase();
 
-      const exists = await fs.pathExists(file);
+  return `${tags.slice(0, 2)}-${tags.slice(2)}`;
+};
 
-      if (!exists) {
-        console.log(`Downloading flag image: [${emoji.code}]...`);
+const parseFlagEmojis = async () => {
+  const data = await fs.readFile('data/emoji-sequences.txt', 'utf8');
 
-        const res = await axios.get(`https://cdn.jsdelivr.net/npm/openmoji@latest/color/svg/${filename}`);
+  return data
+    .split('\n')
+    .map((row) => row.split(';').map((col) => col.trim()))
+    .filter((cols) => {
+      return cols.length >= 3 && ['RGI_Emoji_Flag_Sequence', 'RGI_Emoji_Tag_Sequence'].includes(cols[1]);
+    })
+    .map((cols) => {
+      const codePoints = cols[0].split(' ').map((hex) => Number(`0x${hex}`));
+      const code = toCode(codePoints);
 
-        await fs.outputFile(file, res.data);
-      }
+      return {
+        name: cols[2].split('#')[0].replace('flag:', '').trim(),
+        code,
+        emoji: String.fromCodePoint(...codePoints),
+        unicode: codePoints.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(' '),
+        image: `https://cdn.jsdelivr.net/npm/${meta.name}@${meta.version}/dist/images/${code}.svg`,
+      };
+    });
+};
 
-      return fs.copy(file, `dist/images/${emoji.code}.svg`);
-    }));
+const writeJson = async (file, data, pretty) => {
+  await fs.writeFile(file, JSON.stringify(data, null, pretty ? 2 : 0));
+};
+
+const downloadImage = async (emoji) => {
+  const filename = `${emoji.unicode.replace(/U\+/g, '').replace(/\s/g, '-')}.svg`;
+  const file = `${IMAGE_CACHE_DIR}/${filename}`;
+
+  const exists = await fs.access(file).then(() => true, () => false);
+
+  if (!exists) {
+    console.log(`+ Downloading flag image: [${emoji.code}]...`);
+
+    const res = await fetch(`https://cdn.jsdelivr.net/npm/openmoji@${OPENMOJI_VERSION}/color/svg/${filename}`);
+
+    if (!res.ok) {
+      throw new Error(`Failed to download ${filename}: HTTP ${res.status}`);
+    }
+
+    await fs.writeFile(file, await res.text());
+  }
+
+  return file;
+};
+
+const buildImages = async (emojis) => {
+  await fs.mkdir(IMAGE_CACHE_DIR, { recursive: true });
+  await fs.mkdir('dist/images', { recursive: true });
+
+  for (const emoji of emojis) {
+    const source = await downloadImage(emoji);
+
+    await fs.copyFile(source, `dist/images/${emoji.code}.svg`);
+
+    if (LEGACY_IMAGE_ALIASES[emoji.code]) {
+      await fs.copyFile(source, `dist/images/${LEGACY_IMAGE_ALIASES[emoji.code]}.svg`);
+    }
   }
 };
 
 (async () => {
-  const args = process.argv.slice(2);
-  const pretty = args.length > 0 && args[0] === '--pretty';
+  const pretty = process.argv.includes('--pretty');
 
-  await fs.emptydir('dist');
+  await fs.rm('dist', { recursive: true, force: true });
+  await fs.mkdir('dist');
 
-  const emojis = await getFlagEmojis(pretty);
+  const emojis = await parseFlagEmojis();
 
-  await downloadEmojiImages(emojis);
+  await writeJson('dist/index.json', emojis, pretty);
+  await writeJson(
+    'dist/by-code.json',
+    Object.fromEntries(emojis.map(({ code, ...emoji }) => [code, emoji])),
+    pretty
+  );
+  await buildImages(emojis);
 
-  console.log('✓ Done');
+  console.log(`✓ Built ${emojis.length} flags`);
 })();

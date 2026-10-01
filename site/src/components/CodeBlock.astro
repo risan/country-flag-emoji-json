@@ -1,0 +1,16 @@
+---
+import CopyButton from './CopyButton.astro';
+
+interface Props {
+  id: string;
+  code: string;
+  label?: string;
+}
+
+const { id, code, label } = Astro.props;
+---
+
+<div class="relative rounded-xl border border-line bg-code">
+  <CopyButton source={`#${id}`} label={label} class="absolute right-2 top-2" />
+  <pre class="whitespace-pre-wrap p-4 pr-24 font-mono text-[13px] leading-relaxed [overflow-wrap:anywhere]"><code id={id}>{code}</code></pre>
+</div>

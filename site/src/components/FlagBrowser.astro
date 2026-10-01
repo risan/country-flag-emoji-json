@@ -1,0 +1,271 @@
+---
+import CopyButton from './CopyButton.astro';
+import { flags, normalize } from '../data';
+
+const rows = [
+  { id: 'emoji', label: 'Emoji' },
+  { id: 'code', label: 'Code' },
+  { id: 'unicode', label: 'Unicode' },
+  { id: 'url', label: 'SVG URL' },
+  { id: 'img', label: '<img> tag' },
+  { id: 'svg', label: 'SVG markup' },
+];
+---
+
+<section id="flags" aria-labelledby="flags-title" class="scroll-mt-20">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h2 id="flags-title" class="text-2xl font-semibold tracking-tight">Browse the flags</h2>
+      <p class="mt-1 text-muted">Click a flag to copy its emoji, code, SVG URL or markup.</p>
+    </div>
+
+    <div class="relative w-full sm:w-80">
+      <label for="flag-search" class="sr-only">Search flags by name, code or emoji</label>
+      <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.5"></circle>
+        <path d="m10.5 10.5 3 3" stroke-linecap="round"></path>
+      </svg>
+      <input
+        id="flag-search"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Search name, code or emoji"
+        class="w-full rounded-lg border border-line bg-surface py-2.5 pl-9 pr-9 text-sm placeholder:text-muted focus:border-accent"
+      />
+      <kbd class="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-line px-1.5 font-mono text-xs text-muted sm:block" aria-hidden="true">/</kbd>
+    </div>
+  </div>
+
+  <p id="flag-count" class="mt-4 text-sm text-muted" aria-live="polite">{flags.length} flags</p>
+
+  <ul id="flag-grid" class="mt-3 grid grid-cols-2 gap-3 min-[460px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+    {
+      flags.map((flag, index) => (
+        <li data-search={normalize(`${flag.name} ${flag.code} ${flag.emoji}`)}>
+          <button
+            type="button"
+            data-code={flag.code}
+            data-name={flag.name}
+            data-emoji={flag.emoji}
+            data-unicode={flag.unicode}
+            data-image={flag.image}
+            class="group flex h-full w-full flex-col items-center gap-1.5 rounded-xl border border-line bg-surface px-2 pb-2.5 pt-3 text-center transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-lg hover:shadow-accent/10"
+          >
+            <img
+              src={`/images/${flag.code}.svg`}
+              alt={`Flag of ${flag.name}`}
+              width="64"
+              height="64"
+              loading={index < 24 ? "eager" : "lazy"}
+              decoding="async"
+              class="size-14 rounded-lg bg-code transition duration-150 group-hover:scale-110"
+            />
+            <span class="line-clamp-2 min-h-[2.5em] text-[13px] font-medium leading-tight">{flag.name}</span>
+            <span class="rounded bg-code px-1.5 py-0.5 font-mono text-xs text-muted">{flag.code}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div id="flag-empty" hidden class="mt-10 rounded-xl border border-dashed border-line px-4 py-12 text-center">
+    <p class="font-medium">No flags found</p>
+    <p class="mt-1 text-sm text-muted">Try a country name, an ISO code such as <code class="font-mono">ID</code>, or paste an emoji.</p>
+  </div>
+
+  <dialog
+    id="flag-dialog"
+    aria-labelledby="dialog-name"
+    class="m-auto w-[min(92vw,34rem)] max-h-[92vh] overflow-y-auto rounded-2xl border border-line bg-surface p-0 text-fg shadow-2xl"
+  >
+    <div class="p-5 sm:p-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <img id="dialog-image" alt="" width="96" height="96" class="size-24 shrink-0" />
+          <div>
+            <h3 id="dialog-name" class="text-xl font-semibold tracking-tight"></h3>
+            <p id="dialog-emoji" class="mt-1 text-4xl leading-none" aria-hidden="true"></p>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="dialog-close"
+          aria-label="Close"
+          class="rounded-md p-1.5 text-muted transition hover:bg-code hover:text-fg"
+        >
+          <svg class="size-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="m5 5 10 10M15 5 5 15" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <dl class="mt-5 space-y-2.5">
+        {
+          rows.map((row) => (
+            <div class="flex items-center gap-3 rounded-lg border border-line bg-code px-3 py-2">
+              <div class="min-w-0 flex-1">
+                <dt class="text-[11px] font-medium uppercase tracking-wider text-muted">{row.label}</dt>
+                <dd id={`value-${row.id}`} class:list={["line-clamp-2 break-all font-mono", row.id === "emoji" ? "text-2xl leading-snug" : "text-[13px]"]} />
+              </div>
+              <CopyButton source={`#value-${row.id}`} label={row.label} />
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  const search = document.querySelector<HTMLInputElement>('#flag-search')!;
+  const count = document.querySelector<HTMLElement>('#flag-count')!;
+  const empty = document.querySelector<HTMLElement>('#flag-empty')!;
+  const dialog = document.querySelector<HTMLDialogElement>('#flag-dialog')!;
+  const items = [...document.querySelectorAll<HTMLElement>('#flag-grid > li')];
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('#flag-grid button')];
+
+  const normalize = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const field = (id: string) => document.querySelector<HTMLElement>(`#value-${id}`)!;
+  const svgCopyButton = document.querySelector<HTMLButtonElement>('[data-copy-source="#value-svg"]')!;
+
+  let latestRequest = 0;
+  let shownCode = '';
+
+  function filter() {
+    const terms = normalize(search.value).split(/\s+/).filter(Boolean);
+    let visible = 0;
+
+    for (const item of items) {
+      const matches = terms.every((term) => item.dataset.search!.includes(term));
+      item.hidden = !matches;
+
+      if (matches) {
+        visible++;
+      }
+    }
+
+    count.textContent = `${visible} ${visible === 1 ? 'flag' : 'flags'}`;
+    empty.hidden = visible > 0;
+  }
+
+  function setValue(id: string, value: string) {
+    const element = field(id);
+    element.textContent = value;
+    element.dataset.full = value;
+  }
+
+  async function open(button: HTMLButtonElement) {
+    const { code, name, emoji, unicode, image } = button.dataset as Record<string, string>;
+    const localImage = `/images/${code}.svg`;
+    const picture = document.querySelector<HTMLImageElement>('#dialog-image')!;
+
+    picture.src = localImage;
+    picture.alt = `Flag of ${name}`;
+    document.querySelector('#dialog-name')!.textContent = name;
+    document.querySelector('#dialog-emoji')!.textContent = emoji;
+
+    setValue('emoji', emoji);
+    setValue('code', code);
+    setValue('unicode', unicode);
+    setValue('url', image);
+    setValue('img', `<img src="${image}" alt="Flag of ${name}" width="64" height="64">`);
+    setValue('svg', 'Loading...');
+    svgCopyButton.disabled = true;
+
+    shownCode = code;
+    const request = ++latestRequest;
+
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+
+    if (location.hash !== `#${code}`) {
+      history.replaceState(null, '', `#${code}`);
+    }
+
+    try {
+      const response = await fetch(localImage);
+
+      if (!response.ok) {
+        throw new Error(String(response.status));
+      }
+
+      const markup = await response.text();
+
+      if (request === latestRequest) {
+        setValue('svg', markup.trim());
+        svgCopyButton.disabled = false;
+      }
+    } catch {
+      if (request === latestRequest) {
+        setValue('svg', 'Could not load the SVG.');
+      }
+    }
+  }
+
+  function codeFromHash() {
+    try {
+      return decodeURIComponent(location.hash.slice(1)).toUpperCase();
+    } catch {
+      return '';
+    }
+  }
+
+  function openFromHash() {
+    const code = codeFromHash();
+    const button = buttons.find((candidate) => candidate.dataset.code === code);
+
+    if (button) {
+      open(button);
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }
+
+  search.addEventListener('input', filter);
+
+  search.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && search.value) {
+      search.value = '';
+      filter();
+    }
+  });
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => open(button));
+  }
+
+  document.querySelector('#dialog-close')!.addEventListener('click', () => dialog.close());
+
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  });
+
+  dialog.addEventListener('close', () => {
+    if (codeFromHash() === shownCode) {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+
+    shownCode = '';
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target as HTMLElement;
+    const typing = target.matches('input, textarea, select, [contenteditable]');
+
+    if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey && !event.altKey && !dialog.open) {
+      event.preventDefault();
+      search.focus();
+      search.select();
+    }
+  });
+
+  window.addEventListener('hashchange', openFromHash);
+
+  if (location.hash) {
+    openFromHash();
+  }
+</script>
