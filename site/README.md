@@ -10,4 +10,19 @@ npm run preview    # serve the build locally
 npm run deploy     # build and publish with wrangler (Cloudflare Workers static assets)
 ```
 
-Set `SITE_URL` to override the canonical domain (default in `astro.config.mjs`). Regenerate the social image with `node scripts/make-og.mjs`.
+Set `SITE_URL` to the public URL of the site (default in `astro.config.mjs`). It is used for the canonical link, Open Graph tags, sitemap and robots.txt. Regenerate the social image with `node scripts/make-og.mjs`.
+
+## Deploy with Cloudflare Workers Builds
+
+Connect the GitHub repository to a Worker in the Cloudflare dashboard with these settings:
+
+| Setting | Value |
+| --- | --- |
+| Worker name | `country-flag-emoji-json` (must match `name` in `wrangler.toml`) |
+| Production branch | `main` |
+| Root directory | `site` |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Build variable | `SITE_URL` = the site's public URL, e.g. `https://country-flag-emoji-json.<subdomain>.workers.dev` |
+
+Node.js 24 is pinned in `.node-version`.
