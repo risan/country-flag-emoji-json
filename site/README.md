@@ -10,7 +10,7 @@ npm run preview    # serve the build locally
 npm run deploy     # build and publish with wrangler (Cloudflare Workers static assets)
 ```
 
-The public URL (`https://country-flag-emoji.risanb.com`) is set as `site` in `astro.config.mjs`. It is used for the canonical link, Open Graph tags, sitemap and robots.txt. Regenerate the social image with `node scripts/make-og.mjs`.
+The public URL defaults to `https://country-flag-emoji.risanb.com` (`site` in `astro.config.mjs`); set the `SITE_URL` environment variable to override it. It is used for the canonical link, Open Graph tags, sitemap and robots.txt. Regenerate the social image with `node scripts/make-og.mjs`.
 
 ## Deploy with Cloudflare Workers Builds
 
