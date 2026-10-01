@@ -3,6 +3,7 @@ const fs = require('node:fs/promises');
 const meta = require('../package.json');
 
 const OPENMOJI_VERSION = '17.0.0';
+const IMAGE_CACHE_DIR = `data/openmoji-${OPENMOJI_VERSION}`;
 const REGIONAL_INDICATOR_OFFSET = 0x1F1A5; // U+1F1E6 (🇦) - 0x41 ("A")
 const TAG_OFFSET = 0xE0000; // U+E0067 (TAG LATIN SMALL LETTER G) - 0x67 ("g")
 
@@ -60,7 +61,7 @@ const writeJson = async (file, data, pretty) => {
 
 const downloadImage = async (emoji) => {
   const filename = `${emoji.unicode.replace(/U\+/g, '').replace(/\s/g, '-')}.svg`;
-  const file = `data/images/${filename}`;
+  const file = `${IMAGE_CACHE_DIR}/${filename}`;
 
   const exists = await fs.access(file).then(() => true, () => false);
 
@@ -80,7 +81,7 @@ const downloadImage = async (emoji) => {
 };
 
 const buildImages = async (emojis) => {
-  await fs.mkdir('data/images', { recursive: true });
+  await fs.mkdir(IMAGE_CACHE_DIR, { recursive: true });
   await fs.mkdir('dist/images', { recursive: true });
 
   for (const emoji of emojis) {

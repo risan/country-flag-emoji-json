@@ -24,6 +24,11 @@ npm install country-flag-emoji-json
 ```
 
 ```js
+// CommonJS
+const flags = require('country-flag-emoji-json');
+const flagsByCode = require('country-flag-emoji-json/dist/by-code.json');
+
+// ES modules (Node.js 18.20+ or a bundler)
 import flags from 'country-flag-emoji-json' with { type: 'json' };
 import flagsByCode from 'country-flag-emoji-json/dist/by-code.json' with { type: 'json' };
 ```
@@ -73,7 +78,7 @@ Unicode has flags for a few regions that are not regular ISO 3166-1 countries:
 
 | Code | Region | Why |
 | --- | --- | --- |
-| `AC`, `CP`, `DG`, `EA`, `IC`, `TA` | Ascension Island, Clipperton Island, Diego Garcia, Ceuta & Melilla, Canary Islands, Tristan da Cunha | Exceptionally reserved ISO codes |
+| `AC`, `CP`, `CQ`, `DG`, `EA`, `IC`, `TA` | Ascension Island, Clipperton Island, Sark, Diego Garcia, Ceuta & Melilla, Canary Islands, Tristan da Cunha | Exceptionally reserved ISO codes |
 | `EU`, `UN` | European Union, United Nations | Exceptionally reserved ISO codes |
 | `XK` | Kosovo | User-assigned code, widely used for Kosovo |
 | `GB-ENG`, `GB-SCT`, `GB-WLS` | England, Scotland, Wales | [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2:GB) subdivision codes |
@@ -115,7 +120,7 @@ cd country-flag-emoji-json
 # Download the Unicode emoji data into data/
 npm run download
 
-# Generate dist/; flag images are cached in data/images/
+# Generate dist/; flag images are cached in data/openmoji-<version>/
 npm run build
 ```
 
