@@ -5,97 +5,110 @@ import QuickStart from '../components/QuickStart.astro';
 import Layout from '../layouts/Layout.astro';
 import { authorUrl, flags, npmUrl, repoUrl, version } from '../data';
 
-const facts = [`${flags.length} flags`, 'Unicode 18.0', 'SVG images'];
-const heroFlags = ['ID', 'JP', 'BR', 'KE', 'FR', 'CA'];
-const navLink = 'rounded-md px-2.5 py-1.5 text-sm text-muted transition hover:text-fg';
+const contents = [
+  { id: 'quick-start', title: 'Quick start' },
+  { id: 'files', title: 'Files' },
+  { id: 'fields', title: 'Fields' },
+  { id: 'special-codes', title: 'Special codes' },
+  { id: 'windows', title: 'Flags on Windows' },
+  { id: 'upgrading', title: 'Upgrading from v2' },
+  { id: 'license', title: 'License' },
+  { id: 'flags', title: 'All flags' },
+];
+
+const navLink = 'text-sm text-muted transition-colors hover:text-fg';
+const link = 'text-link underline decoration-link/30 underline-offset-[3px] hover:decoration-link';
 ---
 
 <Layout>
-  <header class="sticky top-0 z-20 border-b border-line bg-bg/85 backdrop-blur">
-    <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-      <a href="/" class="truncate font-mono text-sm font-semibold tracking-tight">country-flag-emoji-json</a>
+  <header class="sticky top-0 z-20 border-b border-line bg-bg/95 backdrop-blur-sm">
+    <div class="mx-auto flex h-12 max-w-[68rem] items-center justify-between gap-4 px-5">
+      <a href="/" class="flex min-w-0 items-center gap-2">
+        <img src="/favicon.svg" alt="" width="20" height="20" class="size-5 shrink-0" />
+        <span class="truncate font-mono text-sm font-medium">country-flag-emoji-json</span>
+        <span class="hidden font-mono text-xs text-subtle min-[400px]:inline">v{version}</span>
+      </a>
 
-      <nav aria-label="Main" class="flex items-center gap-0.5">
-        <a href="#flags" class={`${navLink} hidden sm:block`}>Flags</a>
-        <a href="#docs" class={`${navLink} hidden sm:block`}>Docs</a>
-        <a href={repoUrl} class={navLink} aria-label="GitHub repository">
-          <svg class="size-5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-          </svg>
-        </a>
-        <button
-          type="button"
-          id="theme-toggle"
-          aria-label="Toggle light and dark theme"
-          class="rounded-md p-1.5 text-muted transition hover:text-fg"
-        >
-          <svg class="size-5 [[data-theme=dark]_&]:hidden" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <path d="M16.5 11.5A7 7 0 0 1 8.5 3.5a7 7 0 1 0 8 8z" stroke-linejoin="round"></path>
-          </svg>
-          <svg class="hidden size-5 [[data-theme=dark]_&]:block" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <circle cx="10" cy="10" r="3.5"></circle>
-            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" stroke-linecap="round"></path>
-          </svg>
-        </button>
+      <nav aria-label="Main" class="flex shrink-0 items-center gap-5">
+        <a href="#files" class={`${navLink} hidden sm:block`}>Docs</a>
+        <a href="#flags" class={navLink}>Flags</a>
+        <a href={npmUrl} class={`${navLink} hidden sm:block`}>npm</a>
+        <a href={repoUrl} class={navLink}>GitHub</a>
       </nav>
     </div>
   </header>
 
-  <main class="mx-auto max-w-6xl space-y-20 px-4 pb-24 sm:px-6">
-    <section aria-labelledby="hero-title" class="pt-12 sm:pt-16">
-      <div class="max-w-2xl">
-        <p class="font-mono text-sm text-accent">v{version}</p>
-        <h1 id="hero-title" class="mt-2 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          Country flag emojis as JSON.
-        </h1>
-        <p class="mt-4 text-pretty text-lg text-muted">
-          A tiny dataset of every country flag with its name, ISO code, emoji and Unicode, plus an SVG image for each one. Use it from a CDN or from npm.
-        </p>
+  <main>
+    <div class="mx-auto max-w-[68rem] px-5 lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-x-14">
+      <aside class="hidden lg:block">
+        <nav aria-label="On this page" class="sticky top-12 pt-10">
+          <p class="mb-2 text-[13px] font-medium">On this page</p>
+          <ul id="toc" class="border-l border-line text-[13px]">
+            {
+              contents.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="-ml-px block border-l border-transparent py-1 pl-3 text-muted transition-colors hover:text-fg aria-[current=true]:border-fg aria-[current=true]:text-fg"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </aside>
 
-        <ul class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-          {
-            facts.map((fact) => (
-              <li class="flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-muted">{fact}</li>
-            ))
-          }
-          <li>
-            <a href={npmUrl} class="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent">View on npm</a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="mt-2 grid items-start gap-x-12 gap-y-2 lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div class="min-w-0 max-w-2xl">
-          <QuickStart />
+      <div class="min-w-0 space-y-10 pb-10 pt-10">
+        <div>
+          <h1 class="text-[28px] font-semibold leading-tight tracking-tight">Country flag emojis as JSON</h1>
+          <p class="mt-3 max-w-[40rem] text-base text-muted">
+            All {flags.length} flag emojis from Unicode 18.0. Each flag has a name, an ISO code, the emoji, its Unicode code points, and an SVG image. Use it from a CDN or install it from npm.
+          </p>
         </div>
 
-        <ul class="mt-8 hidden grid-cols-3 gap-3 lg:grid" aria-hidden="true">
-          {
-            heroFlags.map((code, index) => (
-              <li class={`rounded-2xl border border-line bg-surface p-3 shadow-sm ${index % 2 ? 'translate-y-3' : ''}`}>
-                <img src={`/images/${code}.svg`} alt="" width="64" height="64" class="size-16" />
-              </li>
-            ))
-          }
-        </ul>
+        <section id="quick-start" aria-labelledby="quick-start-title">
+          <h2 id="quick-start-title" class="sr-only">Quick start</h2>
+          <QuickStart />
+        </section>
+
+        <Docs />
       </div>
-    </section>
+    </div>
 
-    <FlagBrowser />
-
-    <Docs />
+    <div class="mx-auto max-w-[68rem] px-5 pb-16">
+      <FlagBrowser />
+    </div>
   </main>
 
   <footer class="border-t border-line">
-    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <p>
-        By <a class="text-fg underline decoration-line underline-offset-2 hover:decoration-accent" href={authorUrl}>Risan Bagja Pradana</a>. Licensed CC BY-SA 4.0.
-      </p>
-      <p>
-        <a class="hover:text-fg" href={repoUrl}>GitHub</a> ·
-        <a class="hover:text-fg" href={npmUrl}>npm</a> ·
-        Flags by <a class="hover:text-fg" href="https://openmoji.org">OpenMoji</a>
-      </p>
+    <div class="mx-auto flex max-w-[68rem] flex-col gap-1 px-5 py-6 text-[13px] text-muted sm:flex-row sm:justify-between">
+      <p>Made by <a class={link} href={authorUrl}>Risan Bagja Pradana</a>. Licensed under CC BY-SA 4.0.</p>
+      <p>Flag images by <a class={link} href="https://openmoji.org">OpenMoji</a>.</p>
     </div>
   </footer>
 </Layout>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('#toc a')];
+  const sections = links.map((link) => document.querySelector<HTMLElement>(link.hash)!);
+
+  function markCurrent() {
+    const line = window.innerHeight * 0.3;
+    let current = 0;
+
+    for (const [index, section] of sections.entries()) {
+      if (section.getBoundingClientRect().top <= line) {
+        current = index;
+      }
+    }
+
+    for (const [index, link] of links.entries()) {
+      link.setAttribute('aria-current', String(index === current));
+    }
+  }
+
+  markCurrent();
+  window.addEventListener('scroll', markCurrent, { passive: true });
+</script>

@@ -1,203 +1,227 @@
 ---
 import CodeBlock from './CodeBlock.astro';
 import CopyButton from './CopyButton.astro';
+import Section from './Section.astro';
 import { authorUrl, cdn, repoUrl } from '../data';
 
 const files = [
-  {
-    file: 'index.json',
-    url: `${cdn}/index.json`,
-    about: 'Array of all flags.',
-    example: `[
-  {
-    "name": "Indonesia",
-    "code": "ID",
-    "emoji": "🇮🇩",
-    "unicode": "U+1F1EE U+1F1E9",
-    "image": "${cdn}/images/ID.svg"
-  }
-]`,
-  },
-  {
-    file: 'by-code.json',
-    url: `${cdn}/by-code.json`,
-    about: 'Same data keyed by code, without the code field inside each value.',
-    example: `{
-  "ID": {
-    "name": "Indonesia",
-    "emoji": "🇮🇩",
-    "unicode": "U+1F1EE U+1F1E9",
-    "image": "${cdn}/images/ID.svg"
-  }
-}`,
-  },
-  {
-    file: 'images/{CODE}.svg',
-    url: `${cdn}/images/{CODE}.svg`,
-    about: 'One SVG per flag.',
-    example: `<img
-  src="${cdn}/images/ID.svg"
-  alt="Flag of Indonesia"
-  width="48"
->`,
-  },
+  { file: 'index.json', about: 'An array of all flags.', url: `${cdn}/index.json` },
+  { file: 'by-code.json', about: 'An object of all flags, keyed by code.', url: `${cdn}/by-code.json` },
+  { file: 'images/{CODE}.svg', about: 'One SVG image per flag, such as images/DE.svg.', url: `${cdn}/images/DE.svg` },
 ];
 
+const indexExample = `[
+  {
+    "name": "Germany",
+    "code": "DE",
+    "emoji": "🇩🇪",
+    "unicode": "U+1F1E9 U+1F1EA",
+    "image": "${cdn}/images/DE.svg"
+  }
+]`;
+
+const byCodeExample = `{
+  "DE": {
+    "name": "Germany",
+    "emoji": "🇩🇪",
+    "unicode": "U+1F1E9 U+1F1EA",
+    "image": "${cdn}/images/DE.svg"
+  }
+}`;
+
 const fields = [
-  ['name', 'Unicode CLDR short name.', 'Indonesia'],
-  ['code', 'ISO 3166-1 alpha-2 code, or an ISO 3166-2 code for England, Scotland and Wales. See special codes below.', 'ID'],
-  ['emoji', 'The flag emoji character.', '🇮🇩'],
-  ['unicode', 'Code points of the emoji, space separated.', 'U+1F1EE U+1F1E9'],
-  ['image', 'jsDelivr URL of the SVG image.', `${cdn}/images/ID.svg`],
+  ['name', 'Germany', 'Name of the country or region, from Unicode CLDR.'],
+  ['code', 'DE', 'ISO 3166-1 alpha-2 code. See special codes for the exceptions.'],
+  ['emoji', '🇩🇪', 'The flag emoji.'],
+  ['unicode', 'U+1F1E9 U+1F1EA', 'Code points of the emoji, separated by spaces.'],
+  ['image', '…/images/DE.svg', 'jsDelivr URL of the SVG image.'],
 ];
 
 const specialCodes = [
-  ['AC, CP, CQ, DG, EA, IC, TA', 'Exceptionally reserved ISO 3166-1 codes.'],
-  ['EU, UN', 'Reserved codes, used for the European Union and United Nations.'],
-  ['XK', 'User-assigned code for Kosovo.'],
-  ['GB-ENG, GB-SCT, GB-WLS', 'ISO 3166-2 codes for England, Scotland and Wales.'],
+  ['GB-ENG, GB-SCT, GB-WLS', 'England, Scotland and Wales. These are ISO 3166-2 subdivision codes.'],
+  ['AC, CP, CQ, DG, EA, IC, TA', 'Ascension Island, Clipperton Island, Sark, Diego Garcia, Ceuta & Melilla, Canary Islands, Tristan da Cunha. ISO reserves these codes.'],
+  ['EU, UN', 'European Union and United Nations. ISO reserves these codes.'],
+  ['XK', 'Kosovo. A user-assigned code, used by the EU and others.'],
 ];
 
-const windowsCode = `import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
+const polyfillInstall = 'npm install country-flag-emoji-polyfill';
+
+const polyfillScript = `import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
 
 polyfillCountryFlagEmojis();`;
 
-const windowsCss = `body {
+const polyfillCss = `body {
   font-family: 'Twemoji Country Flags', system-ui, sans-serif;
 }`;
 
-const linkClass = 'text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent';
-const inlineCode = 'rounded bg-code px-1.5 py-0.5 font-mono text-[0.85em]';
-const th = 'px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-muted';
+const renamed = [
+  ['England', 'ENGLAND', 'GB-ENG'],
+  ['Scotland', 'SCOTLAND', 'GB-SCT'],
+  ['Wales', 'WALES', 'GB-WLS'],
+];
+
+const link = 'text-link underline decoration-link/30 underline-offset-[3px] hover:decoration-link';
+const inlineCode = 'rounded-sm bg-code px-1 py-px font-mono text-[0.86em]';
+const th = 'border-b border-line py-2 pr-4 text-left text-[13px] font-medium text-muted';
+const td = 'border-b border-line py-2.5 pr-4 align-top';
 ---
 
-<section id="docs" aria-labelledby="docs-title" class="scroll-mt-20 space-y-14">
-  <div>
-    <h2 id="docs-title" class="text-2xl font-semibold tracking-tight">Documentation</h2>
-    <p class="mt-1 text-muted">Everything ships in the <code class={inlineCode}>dist</code> folder of the package.</p>
+<Section id="files" title="Files">
+  <p>
+    Everything is in the <code class={inlineCode}>dist</code> folder of the package. The URLs below use jsDelivr. The same files are on <a class={link} href="https://unpkg.com/country-flag-emoji-json/">unpkg</a>.
+  </p>
+
+  <div class="relative overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class={th}>File</th>
+          <th class={`${th} hidden sm:table-cell`}>Contents</th>
+          <th class={`${th} pr-0 text-right`}><span class="sr-only">URL</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          files.map((item, index) => (
+            <tr>
+              <td class={td}>
+                <code class="whitespace-nowrap font-mono text-[13px] font-medium">{item.file}</code>
+                <p class="mt-0.5 text-muted sm:hidden">{item.about}</p>
+              </td>
+              <td class={`${td} hidden text-muted sm:table-cell`}>{item.about}</td>
+              <td class={`${td} py-1.5 pr-0 text-right`}>
+                <span id={`file-url-${index}`} data-full={item.url} hidden></span>
+                <CopyButton source={`#file-url-${index}`} label={`${item.file} URL`} text="Copy URL" />
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
 
-  <div id="files" class="space-y-4">
-    <h3 class="text-lg font-semibold">Files</h3>
-    <p class="text-muted">
-      Use jsDelivr, as below. The package is also available on <a class={linkClass} href="https://unpkg.com/country-flag-emoji-json/">unpkg</a> through npm.
-    </p>
-    <div class="space-y-4">
-      {
-        files.map((item, index) => (
-          <div class="space-y-3 rounded-xl border border-line bg-surface p-4 sm:p-5">
-            <div>
-              <code class="font-mono font-medium">{item.file}</code>
-              <p class="mt-0.5 text-sm text-muted">{item.about}</p>
-            </div>
-            <div class="flex items-center gap-3 rounded-lg border border-line bg-code px-3 py-2">
-              <code id={`file-url-${index}`} class="min-w-0 flex-1 break-all font-mono text-xs">{item.url}</code>
-              <CopyButton source={`#file-url-${index}`} label={`${item.file} URL`} />
-            </div>
-            <CodeBlock id={`file-example-${index}`} code={item.example} label={`${item.file} example`} />
-          </div>
-        ))
-      }
-    </div>
-  </div>
+  <CodeBlock id="example-index" code={indexExample} lang="json" title="index.json" />
+  <CodeBlock id="example-by-code" code={byCodeExample} lang="json" title="by-code.json" />
+</Section>
 
-  <div id="fields" class="space-y-4">
-    <h3 class="text-lg font-semibold">Fields</h3>
-    <div class="overflow-x-auto rounded-xl border border-line bg-surface">
-      <table class="w-full min-w-[32rem] text-sm">
-        <thead class="border-b border-line bg-code">
-          <tr>
-            <th class={th}>Field</th>
-            <th class={th}>Description</th>
-            <th class={th}>Example</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-line align-top">
-          {
-            fields.map(([field, about, example]) => (
-              <tr>
-                <td class="px-4 py-3"><code class="font-mono font-medium text-accent">{field}</code></td>
-                <td class="px-4 py-3 text-muted">{about}</td>
-                <td class="px-4 py-3"><code class="break-all font-mono text-xs">{example}</code></td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
+<Section id="fields" title="Fields">
+  <p>Each flag has these fields. In <code class={inlineCode}>by-code.json</code>, the code is the key, so <code class={inlineCode}>code</code> is left out.</p>
 
-  <div id="special-codes" class="space-y-4">
-    <h3 class="text-lg font-semibold">Special codes</h3>
-    <p class="text-muted">Most codes are ISO 3166-1 alpha-2 country codes. These are the exceptions.</p>
-    <dl class="divide-y divide-line rounded-xl border border-line bg-surface">
-      {
-        specialCodes.map(([codes, about]) => (
-          <div class="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:gap-6">
-            <dt class="font-mono text-sm font-medium sm:w-64 sm:shrink-0">{codes}</dt>
-            <dd class="text-sm text-muted">{about}</dd>
-          </div>
-        ))
-      }
-    </dl>
+  <div class="relative overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class={th}>Field</th>
+          <th class={th}>Example</th>
+          <th class={th}>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          fields.map(([field, example, about]) => (
+            <tr>
+              <td class={`${td} font-mono text-[13px] font-medium`}>{field}</td>
+              <td class={`${td} font-mono text-[13px] sm:whitespace-nowrap`}>{example}</td>
+              <td class={`${td} text-muted`}>{about}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
+</Section>
 
-  <div id="windows" class="space-y-4">
-    <h3 class="text-lg font-semibold">Flags on Windows</h3>
-    <p class="text-muted">
-      Windows does not ship flag emoji glyphs, so <span class="text-fg">🇮🇩</span> shows up as the letters <code class={inlineCode}>ID</code>. Two ways around it:
-    </p>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="min-w-0 space-y-3">
-        <p class="font-medium">1. Use the SVG image</p>
-        <p class="text-sm text-muted">Every flag has an <code class={inlineCode}>image</code> URL that renders the same everywhere. This is the most reliable option.</p>
+<Section id="special-codes" title="Special codes">
+  <p>Most codes are ISO 3166-1 alpha-2 country codes. These ones are not.</p>
+
+  <div class="relative overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class={th}>Code</th>
+          <th class={th}>Flag</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          specialCodes.map(([codes, about]) => (
+            <tr>
+              <td class={`${td} font-mono text-[13px] font-medium sm:whitespace-nowrap`}>{codes}</td>
+              <td class={`${td} text-muted`}>{about}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Section>
+
+<Section id="windows" title="Flags on Windows">
+  <p>
+    Windows has no flag emojis. It shows the two letters of the code instead, so the flag of Germany appears as <code class={inlineCode}>DE</code>. There are two fixes.
+  </p>
+
+  <ol class="space-y-4">
+    <li class="flex gap-3">
+      <span class="flex size-6 shrink-0 items-center justify-center rounded-full border border-line font-mono text-xs text-muted">1</span>
+      <div class="min-w-0 flex-1">
+        <p class="font-medium">Use the SVG image</p>
+        <p class="text-muted">Show the <code class={inlineCode}>image</code> URL in an <code class={inlineCode}>&lt;img&gt;</code> tag. It looks the same on every system. This is the most reliable fix.</p>
       </div>
-      <div class="min-w-0 space-y-3">
-        <p class="font-medium">2. Load the polyfill</p>
-        <p class="text-sm text-muted">
-          Install <a class={linkClass} href="https://www.npmjs.com/package/country-flag-emoji-polyfill">country-flag-emoji-polyfill</a>, call it once, and put <code class={inlineCode}>"Twemoji Country Flags"</code> first in your font-family. This site does the same.
-        </p>
-        <CodeBlock id="snippet-polyfill-js" code={windowsCode} label="polyfill script" />
-        <CodeBlock id="snippet-polyfill-css" code={windowsCss} label="polyfill CSS" />
+    </li>
+    <li class="flex gap-3">
+      <span class="flex size-6 shrink-0 items-center justify-center rounded-full border border-line font-mono text-xs text-muted">2</span>
+      <div class="min-w-0 flex-1 space-y-3">
+        <div>
+          <p class="font-medium">Load a flag font</p>
+          <p class="text-muted">
+            <a class={link} href="https://www.npmjs.com/package/country-flag-emoji-polyfill">country-flag-emoji-polyfill</a> adds a flag font only when the browser needs it. Call it once, then put the font first in your CSS. This site does the same.
+          </p>
+        </div>
+        <CodeBlock id="polyfill-install" code={polyfillInstall} lang="sh" title="Terminal" />
+        <CodeBlock id="polyfill-script" code={polyfillScript} lang="js" title="JavaScript" />
+        <CodeBlock id="polyfill-css" code={polyfillCss} lang="css" title="CSS" />
       </div>
-    </div>
+    </li>
+  </ol>
+</Section>
+
+<Section id="upgrading" title="Upgrading from v2">
+  <p>There is one breaking change. England, Scotland and Wales now use ISO 3166-2 codes. Their old image files still exist, so old image URLs keep working.</p>
+
+  <div class="relative overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class={th}>Flag</th>
+          <th class={th}>v2 code</th>
+          <th class={th}>v3 code</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          renamed.map(([flag, before, after]) => (
+            <tr>
+              <td class={td}>{flag}</td>
+              <td class={`${td} font-mono text-[13px] text-muted line-through decoration-subtle`}>{before}</td>
+              <td class={`${td} font-mono text-[13px] font-medium`}>{after}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
 
-  <div id="upgrading" class="space-y-4">
-    <h3 class="text-lg font-semibold">Upgrading from v2</h3>
-    <p class="text-muted">
-      One breaking change: the codes for England, Scotland and Wales are now ISO 3166-2 codes. The old image file names still exist.
-    </p>
-    <div class="overflow-x-auto rounded-xl border border-line bg-surface">
-      <table class="w-full min-w-[22rem] text-sm">
-        <thead class="border-b border-line bg-code">
-          <tr>
-            <th class={th}>Flag</th>
-            <th class={th}>v2 code</th>
-            <th class={th}>v3 code</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-line font-mono">
-          <tr><td class="px-4 py-2.5 font-sans">England</td><td class="px-4 py-2.5 text-muted">ENGLAND</td><td class="px-4 py-2.5">GB-ENG</td></tr>
-          <tr><td class="px-4 py-2.5 font-sans">Scotland</td><td class="px-4 py-2.5 text-muted">SCOTLAND</td><td class="px-4 py-2.5">GB-SCT</td></tr>
-          <tr><td class="px-4 py-2.5 font-sans">Wales</td><td class="px-4 py-2.5 text-muted">WALES</td><td class="px-4 py-2.5">GB-WLS</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="text-sm font-medium">Also new in v3</p>
-    <ul class="list-disc space-y-1 pl-5 text-sm text-muted marker:text-accent">
-      <li>Sark (<code class={inlineCode}>CQ</code>) is added.</li>
-      <li>Names follow Unicode 18.0: Türkiye, St. Helena, Ascension &amp; Tristan da Cunha, Heard Island &amp; McDonald Islands, French Southern and Antarctic Lands.</li>
-      <li>Images are updated to OpenMoji 17.</li>
-    </ul>
-  </div>
+  <p>Other changes in v3:</p>
+  <ul class="list-disc space-y-1 pl-5 marker:text-subtle">
+    <li>New flag: Sark (<code class={inlineCode}>CQ</code>).</li>
+    <li>Names follow Unicode 18.0. For example, Turkey is now Türkiye.</li>
+    <li>Images are from OpenMoji 17.</li>
+  </ul>
+</Section>
 
-  <div id="credits" class="space-y-3">
-    <h3 class="text-lg font-semibold">Credits and license</h3>
-    <ul class="list-disc space-y-1 pl-5 text-sm text-muted marker:text-accent">
-      <li>Flag sequences and names come from <a class={linkClass} href="https://unicode.org/Public/emoji/">Unicode 18.0</a> emoji-sequences and CLDR.</li>
-      <li>SVG images are from <a class={linkClass} href="https://openmoji.org">OpenMoji</a> 17.0.0, licensed <a class={linkClass} href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</li>
-      <li>Package by <a class={linkClass} href={authorUrl}>Risan Bagja Pradana</a>, licensed <a class={linkClass} href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Source on <a class={linkClass} href={repoUrl}>GitHub</a>.</li>
-    </ul>
-  </div>
-</section>
+<Section id="license" title="License">
+  <p class="text-muted">
+    Flag data comes from <a class={link} href="https://unicode.org/Public/18.0.0/emoji/">Unicode 18.0</a> and CLDR. Images are from <a class={link} href="https://openmoji.org">OpenMoji</a>. The package and images are licensed under <a class={link} href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Made by <a class={link} href={authorUrl}>Risan Bagja Pradana</a>, source on <a class={link} href={repoUrl}>GitHub</a>.
+  </p>
+</Section>

@@ -1,4 +1,9 @@
 ---
+import '@fontsource/ibm-plex-sans/latin-400.css';
+import '@fontsource/ibm-plex-sans/latin-500.css';
+import '@fontsource/ibm-plex-sans/latin-600.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
 import '../styles/global.css';
 import { authorUrl, description as defaultDescription, repoUrl, version } from '../data';
 
@@ -41,7 +46,7 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" />
     {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:type" content="website" />
@@ -52,7 +57,7 @@ const jsonLd = {
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="A grid of country flags above the package name country-flag-emoji-json" />
+    <meta property="og:image:alt" content="The package name country-flag-emoji-json above a row of country flags" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -60,21 +65,6 @@ const jsonLd = {
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <script is:inline>
-      (function () {
-        var theme;
-
-        try {
-          theme = localStorage.getItem('theme');
-        } catch (error) {}
-
-        if (theme !== 'light' && theme !== 'dark') {
-          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-
-        document.documentElement.dataset.theme = theme;
-      })();
-    </script>
   </head>
   <body>
     <slot />
@@ -137,18 +127,9 @@ const jsonLd = {
           button.removeAttribute('data-copied');
 
           if (label) {
-            label.textContent = 'Copy';
+            label.textContent = button.dataset.label!;
           }
         }, 1600);
-      });
-
-      document.querySelector('#theme-toggle')?.addEventListener('click', () => {
-        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-
-        try {
-          localStorage.setItem('theme', next);
-        } catch {}
       });
     </script>
   </body>

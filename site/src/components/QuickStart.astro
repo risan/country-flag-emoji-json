@@ -6,40 +6,58 @@ const tabs = [
   {
     id: 'cdn',
     title: 'CDN',
-    blocks: [{ code: `${cdn}/index.json` }],
-  },
-  {
-    id: 'npm',
-    title: 'npm',
-    blocks: [
-      { label: 'Install', code: 'npm install country-flag-emoji-json' },
-      { label: 'CommonJS', code: "const flags = require('country-flag-emoji-json');" },
-      {
-        label: 'ES modules (Node.js 18.20+ or a bundler)',
-        code: "import flags from 'country-flag-emoji-json' with { type: 'json' };",
-      },
-    ],
-  },
-  {
-    id: 'fetch',
-    title: 'fetch',
+    intro: 'Fetch the JSON from jsDelivr. Nothing to install.',
     blocks: [
       {
+        title: 'JavaScript',
+        lang: 'js',
         code: `const response = await fetch(
   '${cdn}/by-code.json'
 );
 const flags = await response.json();
 
-console.log(flags.JP.name); // Japan
-console.log(flags.JP.image); // SVG URL`,
+flags.DE.name;  // "Germany"
+flags.DE.emoji; // "🇩🇪"
+flags.DE.image; // URL of the SVG image`,
       },
     ],
   },
-];
+  {
+    id: 'npm',
+    title: 'npm',
+    intro: 'Install the package. It contains only JSON and SVG files.',
+    blocks: [
+      { title: 'Terminal', lang: 'sh', code: 'npm install country-flag-emoji-json' },
+      { title: 'CommonJS', lang: 'js', code: "const flags = require('country-flag-emoji-json');" },
+      {
+        title: 'ES modules (Node.js 18.20+ or a bundler)',
+        lang: 'js',
+        code: "import flags from 'country-flag-emoji-json' with { type: 'json' };",
+      },
+    ],
+  },
+  {
+    id: 'html',
+    title: 'HTML',
+    intro: 'Show a flag as an image. It looks the same on every system, Windows included.',
+    blocks: [
+      {
+        title: 'HTML',
+        lang: 'html',
+        code: `<img
+  src="${cdn}/images/DE.svg"
+  alt="Flag of Germany"
+  width="32"
+  height="32"
+>`,
+      },
+    ],
+  },
+] as const;
 ---
 
-<div id="quickstart" class="mt-8">
-  <div role="tablist" aria-label="Quick start" class="mb-3 inline-flex rounded-lg border border-line bg-surface p-1">
+<div id="quickstart">
+  <div role="tablist" aria-label="Quick start" class="flex gap-5 border-b border-line">
     {
       tabs.map((tab, index) => (
         <button
@@ -49,7 +67,7 @@ console.log(flags.JP.image); // SVG URL`,
           aria-controls={`panel-${tab.id}`}
           aria-selected={index === 0 ? 'true' : 'false'}
           tabindex={index === 0 ? 0 : -1}
-          class="rounded-md px-3.5 py-1.5 text-sm font-medium text-muted transition hover:text-fg aria-selected:bg-accent aria-selected:text-accent-fg"
+          class="-mb-px border-b-2 border-transparent pb-2 text-sm font-medium text-muted transition-colors hover:text-fg aria-selected:border-fg aria-selected:text-fg"
         >
           {tab.title}
         </button>
@@ -59,12 +77,10 @@ console.log(flags.JP.image); // SVG URL`,
 
   {
     tabs.map((tab, index) => (
-      <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0} class="space-y-2">
+      <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0} class="space-y-3 pt-4">
+        <p class="text-muted">{tab.intro}</p>
         {tab.blocks.map((block, blockIndex) => (
-          <div>
-            {block.label && <p class="mb-1 text-xs font-medium text-muted">{block.label}</p>}
-            <CodeBlock id={`snippet-${tab.id}-${blockIndex}`} code={block.code} label={block.label ?? `${tab.title} snippet`} />
-          </div>
+          <CodeBlock id={`snippet-${tab.id}-${blockIndex}`} code={block.code} lang={block.lang} title={block.title} />
         ))}
       </div>
     ))

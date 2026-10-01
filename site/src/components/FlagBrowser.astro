@@ -6,22 +6,22 @@ const rows = [
   { id: 'emoji', label: 'Emoji' },
   { id: 'code', label: 'Code' },
   { id: 'unicode', label: 'Unicode' },
-  { id: 'url', label: 'SVG URL' },
-  { id: 'img', label: '<img> tag' },
-  { id: 'svg', label: 'SVG markup' },
+  { id: 'url', label: 'Image URL' },
+  { id: 'img', label: 'HTML' },
+  { id: 'svg', label: 'SVG' },
 ];
 ---
 
-<section id="flags" aria-labelledby="flags-title" class="scroll-mt-20">
-  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <h2 id="flags-title" class="text-2xl font-semibold tracking-tight">Browse the flags</h2>
-      <p class="mt-1 text-muted">Click a flag to copy its emoji, code, SVG URL or markup.</p>
-    </div>
+<section id="flags" aria-labelledby="flags-title" class="border-t border-line pt-8">
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <h2 id="flags-title" class="text-xl font-semibold tracking-tight">
+      All flags <span id="flag-count" class="ml-1 font-mono text-base font-normal text-subtle">{flags.length}</span>
+    </h2>
+    <p id="flag-status" class="sr-only" aria-live="polite"></p>
 
-    <div class="relative w-full sm:w-80">
+    <div class="relative w-full sm:w-72">
       <label for="flag-search" class="sr-only">Search flags by name, code or emoji</label>
-      <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <svg class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-subtle" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <circle cx="7" cy="7" r="4.5"></circle>
         <path d="m10.5 10.5 3 3" stroke-linecap="round"></path>
       </svg>
@@ -31,15 +31,15 @@ const rows = [
         autocomplete="off"
         spellcheck="false"
         placeholder="Search name, code or emoji"
-        class="w-full rounded-lg border border-line bg-surface py-2.5 pl-9 pr-9 text-sm placeholder:text-muted focus:border-accent"
+        class="h-9 w-full rounded-md border border-line bg-bg pl-8 pr-8 text-sm outline-none transition-colors placeholder:text-subtle hover:border-zinc-300 focus:border-link"
       />
-      <kbd class="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-line px-1.5 font-mono text-xs text-muted sm:block" aria-hidden="true">/</kbd>
+      <kbd class="pointer-events-none absolute right-2 top-1/2 hidden h-5 -translate-y-1/2 items-center rounded-sm border border-line px-1.5 font-mono text-[11px] text-subtle sm:flex" aria-hidden="true">/</kbd>
     </div>
   </div>
 
-  <p id="flag-count" class="mt-4 text-sm text-muted" aria-live="polite">{flags.length} flags</p>
+  <p class="mb-3 text-sm text-muted">Click a flag to copy its emoji, code, Unicode, image URL or SVG.</p>
 
-  <ul id="flag-grid" class="mt-3 grid grid-cols-2 gap-3 min-[460px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+  <ul id="flag-grid" class="-mx-2 grid grid-cols-1 gap-x-4 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     {
       flags.map((flag, index) => (
         <li data-search={normalize(`${flag.name} ${flag.code} ${flag.emoji}`)}>
@@ -50,76 +50,72 @@ const rows = [
             data-emoji={flag.emoji}
             data-unicode={flag.unicode}
             data-image={flag.image}
-            class="group flex h-full w-full flex-col items-center gap-1.5 rounded-xl border border-line bg-surface px-2 pb-2.5 pt-3 text-center transition duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-lg hover:shadow-accent/10"
+            title={flag.name}
+            class="flex h-9 w-full items-center gap-2 rounded-sm px-2 text-left transition-colors hover:bg-hover"
           >
             <img
               src={`/images/${flag.code}.svg`}
-              alt={`Flag of ${flag.name}`}
-              width="64"
-              height="64"
-              loading={index < 24 ? "eager" : "lazy"}
+              alt=""
+              width="32"
+              height="32"
+              loading={index < 40 ? 'eager' : 'lazy'}
               decoding="async"
-              class="size-14 rounded-lg bg-code transition duration-150 group-hover:scale-110"
+              class="size-8 shrink-0"
             />
-            <span class="line-clamp-2 min-h-[2.5em] text-[13px] font-medium leading-tight">{flag.name}</span>
-            <span class="rounded bg-code px-1.5 py-0.5 font-mono text-xs text-muted">{flag.code}</span>
+            <span class="min-w-0 flex-1 truncate text-sm">{flag.name}</span>
+            <span class="shrink-0 font-mono text-xs text-subtle">{flag.code}</span>
           </button>
         </li>
       ))
     }
   </ul>
 
-  <div id="flag-empty" hidden class="mt-10 rounded-xl border border-dashed border-line px-4 py-12 text-center">
+  <div id="flag-empty" hidden class="py-10 text-center">
     <p class="font-medium">No flags found</p>
-    <p class="mt-1 text-sm text-muted">Try a country name, an ISO code such as <code class="font-mono">ID</code>, or paste an emoji.</p>
+    <p class="mt-1 text-sm text-muted">Try a country name, a code such as <code class="font-mono">DE</code>, or paste an emoji.</p>
   </div>
 
   <dialog
     id="flag-dialog"
     aria-labelledby="dialog-name"
-    class="m-auto w-[min(92vw,34rem)] max-h-[92vh] overflow-y-auto rounded-2xl border border-line bg-surface p-0 text-fg shadow-2xl"
+    class="m-auto w-[min(calc(100vw-2rem),32rem)] max-h-[90vh] overflow-y-auto rounded-md border border-line bg-bg p-0 text-fg shadow-xl"
   >
-    <div class="p-5 sm:p-6">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <img id="dialog-image" alt="" width="96" height="96" class="size-24 shrink-0" />
-          <div>
-            <h3 id="dialog-name" class="text-xl font-semibold tracking-tight"></h3>
-            <p id="dialog-emoji" class="mt-1 text-4xl leading-none" aria-hidden="true"></p>
-          </div>
-        </div>
-        <button
-          type="button"
-          id="dialog-close"
-          aria-label="Close"
-          class="rounded-md p-1.5 text-muted transition hover:bg-code hover:text-fg"
-        >
-          <svg class="size-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-            <path d="m5 5 10 10M15 5 5 15" stroke-linecap="round"></path>
-          </svg>
-        </button>
+    <div class="flex items-center gap-3 border-b border-line py-3 pl-4 pr-2">
+      <img id="dialog-image" alt="" width="56" height="56" class="-my-1 size-14 shrink-0" />
+      <div class="min-w-0 flex-1">
+        <h3 id="dialog-name" class="truncate text-lg font-semibold leading-tight"></h3>
+        <p id="dialog-code" class="font-mono text-[13px] text-subtle"></p>
       </div>
-
-      <dl class="mt-5 space-y-2.5">
-        {
-          rows.map((row) => (
-            <div class="flex items-center gap-3 rounded-lg border border-line bg-code px-3 py-2">
-              <div class="min-w-0 flex-1">
-                <dt class="text-[11px] font-medium uppercase tracking-wider text-muted">{row.label}</dt>
-                <dd id={`value-${row.id}`} class:list={["line-clamp-2 break-all font-mono", row.id === "emoji" ? "text-2xl leading-snug" : "text-[13px]"]} />
-              </div>
-              <CopyButton source={`#value-${row.id}`} label={row.label} />
-            </div>
-          ))
-        }
-      </dl>
+      <button
+        type="button"
+        id="dialog-close"
+        aria-label="Close"
+        class="self-start rounded-sm p-1.5 text-muted transition-colors hover:bg-hover hover:text-fg"
+      >
+        <svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="m4 4 8 8M12 4l-8 8" stroke-linecap="round"></path>
+        </svg>
+      </button>
     </div>
+
+    <dl class="divide-y divide-line">
+      {
+        rows.map((row) => (
+          <div class="grid grid-cols-[5.5rem_minmax(0,1fr)_auto] items-center gap-3 py-1.5 pl-4 pr-2">
+            <dt class="text-[13px] text-muted">{row.label}</dt>
+            <dd id={`value-${row.id}`} class:list={['truncate font-mono', row.id === 'emoji' ? 'text-xl leading-8' : 'text-[13px] leading-8']} />
+            <CopyButton source={`#value-${row.id}`} label={row.label} />
+          </div>
+        ))
+      }
+    </dl>
   </dialog>
 </section>
 
 <script>
   const search = document.querySelector<HTMLInputElement>('#flag-search')!;
   const count = document.querySelector<HTMLElement>('#flag-count')!;
+  const status = document.querySelector<HTMLElement>('#flag-status')!;
   const empty = document.querySelector<HTMLElement>('#flag-empty')!;
   const dialog = document.querySelector<HTMLDialogElement>('#flag-dialog')!;
   const items = [...document.querySelectorAll<HTMLElement>('#flag-grid > li')];
@@ -145,7 +141,8 @@ const rows = [
       }
     }
 
-    count.textContent = `${visible} ${visible === 1 ? 'flag' : 'flags'}`;
+    count.textContent = String(visible);
+    status.textContent = `${visible} ${visible === 1 ? 'flag' : 'flags'} found`;
     empty.hidden = visible > 0;
   }
 
@@ -163,13 +160,13 @@ const rows = [
     picture.src = localImage;
     picture.alt = `Flag of ${name}`;
     document.querySelector('#dialog-name')!.textContent = name;
-    document.querySelector('#dialog-emoji')!.textContent = emoji;
+    document.querySelector('#dialog-code')!.textContent = code;
 
     setValue('emoji', emoji);
     setValue('code', code);
     setValue('unicode', unicode);
     setValue('url', image);
-    setValue('img', `<img src="${image}" alt="Flag of ${name}" width="64" height="64">`);
+    setValue('img', `<img src="${image}" alt="Flag of ${name}" width="32" height="32">`);
     setValue('svg', 'Loading...');
     svgCopyButton.disabled = true;
 

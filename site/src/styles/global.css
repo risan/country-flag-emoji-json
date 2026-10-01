@@ -1,60 +1,38 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
-
-:root {
-  color-scheme: light;
-  --bg: #fbfaf6;
-  --surface: #ffffff;
-  --fg: #14201f;
-  --muted: #55655f;
-  --line: #e3e0d6;
-  --accent: #0f766e;
-  --accent-fg: #ffffff;
-  --accent-soft: #dff3ef;
-  --code-bg: #f2f0e8;
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0b1514;
-  --surface: #112220;
-  --fg: #e7f0ee;
-  --muted: #94aaa5;
-  --line: #213633;
-  --accent: #5eead4;
-  --accent-fg: #062622;
-  --accent-soft: #12332f;
-  --code-bg: #0e1c1a;
-}
-
-@theme inline {
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-fg: var(--fg);
-  --color-muted: var(--muted);
-  --color-line: var(--line);
-  --color-accent: var(--accent);
-  --color-accent-fg: var(--accent-fg);
-  --color-accent-soft: var(--accent-soft);
-  --color-code: var(--code-bg);
-  --font-sans: 'Twemoji Country Flags', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+@theme {
+  --color-bg: #ffffff;
+  --color-fg: #18181b;
+  --color-muted: #52525b;
+  --color-subtle: #71717a;
+  --color-line: #e4e4e7;
+  --color-hover: #f4f4f5;
+  --color-code: #f7f7f8;
+  --color-link: #2048c8;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --font-sans: 'Twemoji Country Flags', 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji';
-  --font-mono: 'Twemoji Country Flags', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --font-mono: 'Twemoji Country Flags', 'IBM Plex Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
 }
 
 html {
-  background: var(--bg);
+  color-scheme: light;
+  background: var(--color-bg);
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 4.5rem;
 }
 
 body {
-  @apply bg-bg font-sans text-fg antialiased;
+  @apply bg-bg font-sans text-[15px] leading-relaxed text-fg antialiased;
+}
+
+::selection {
+  background: #dbe4fb;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-link);
   outline-offset: 2px;
 }
 
@@ -69,20 +47,12 @@ body {
   }
 }
 
+.astro-code {
+  background-color: transparent !important;
+}
+
 dialog#flag-dialog::backdrop {
-  background: rgb(8 20 19 / 0.55);
-  backdrop-filter: blur(3px);
-}
-
-dialog#flag-dialog[open] {
-  animation: dialog-in 160ms ease-out;
-}
-
-@keyframes dialog-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
+  background: rgb(24 24 27 / 0.4);
 }
 
 [data-copied] .copy-icon {
