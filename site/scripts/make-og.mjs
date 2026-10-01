@@ -12,7 +12,7 @@ const background = Buffer.from(`
   <rect width="1200" height="630" fill="#ffffff"/>
   <text x="${left}" y="250" font-family="DejaVu Sans Mono, monospace" font-weight="bold" font-size="64" fill="#18181b">country-flag-emoji-json</text>
   <text x="${left}" y="316" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" fill="#52525b">262 country flag emojis as JSON, with an SVG image for each.</text>
-  <text x="${left}" y="560" font-family="DejaVu Sans Mono, monospace" font-size="24" fill="#8b8b94">country-flag-emoji.risanb.com</text>
+  <text x="${left}" y="560" font-family="DejaVu Sans Mono, monospace" font-size="24" fill="#71717a">country-flag-emoji.risanb.com</text>
 </svg>`);
 
 const mark = await sharp(readFileSync(new URL('../public/favicon.svg', import.meta.url)), { density: 600 }).resize(72, 72).png().toBuffer();

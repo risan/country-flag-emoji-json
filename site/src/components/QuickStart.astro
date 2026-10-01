@@ -28,14 +28,11 @@ flags.DE.image; // URL of the SVG image`,
     intro: 'Install the package. It contains only JSON and SVG files.',
     blocks: [
       { title: 'Terminal', lang: 'sh', code: 'npm install country-flag-emoji-json' },
+      { title: 'CommonJS', lang: 'js', code: "const flags = require('country-flag-emoji-json');" },
       {
-        title: 'JavaScript',
+        title: 'ES modules (Node.js 18.20+ or a bundler)',
         lang: 'js',
-        code: `// CommonJS
-const flags = require('country-flag-emoji-json');
-
-// ES modules (Node.js 18.20+ or a bundler)
-import flags from 'country-flag-emoji-json' with { type: 'json' };`,
+        code: "import flags from 'country-flag-emoji-json' with { type: 'json' };",
       },
     ],
   },
