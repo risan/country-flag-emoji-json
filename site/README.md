@@ -18,11 +18,11 @@ Connect the GitHub repository to a Worker in the Cloudflare dashboard with these
 
 | Setting | Value |
 | --- | --- |
-| Worker name | `country-flag-emoji-json` (must match `name` in `wrangler.toml`) |
+| Worker name | `country-flag-emoji` (must match `name` in `wrangler.toml`) |
 | Production branch | `main` |
 | Root directory | `site` |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
-| Build variable | `SITE_URL` = the site's public URL, e.g. `https://country-flag-emoji-json.<subdomain>.workers.dev` |
+| Build variable | `SITE_URL` = the site's public URL, e.g. `https://country-flag-emoji.<subdomain>.workers.dev` |
 
 Node.js 24 is pinned in `.node-version`.

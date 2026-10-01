@@ -1,5 +1,5 @@
 # Static site only: Cloudflare serves the Astro build output, no Worker script.
-name = "country-flag-emoji-json"
+name = "country-flag-emoji"
 compatibility_date = "2026-09-30"
 
 [assets]
